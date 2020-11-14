@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>Kalibrator.qml</file>
+        <file>CustomButton.qml</file>
+        <file>Aplikacja.qml</file>
+    </qresource>
+</RCC>

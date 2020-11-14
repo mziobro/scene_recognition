@@ -1,0 +1,109 @@
+#include "bag.h"
+
+#include <QFile>
+#include <QDir>
+#include <QDebug>
+
+
+Bag::Bag(QString name)
+    : m_name(name)
+{
+
+}
+
+int Bag::getOccurance(int name) const
+{
+    for(auto &word : m_bagOfwords)
+    {
+        if(word.idx == name)
+        {
+            return word.occurances;
+        }
+    }
+
+    return 0;
+}
+
+void Bag::addWord(int idx)
+{
+    bool alreadyPresent = false;
+    for(auto &word : m_bagOfwords)
+    {
+        if(word.idx == idx)
+        {
+            word.occurances++;
+            alreadyPresent = true;
+            break;
+        }
+    }
+    if(!alreadyPresent)
+        m_bagOfwords.push_back({idx, 1});
+}
+
+void Bag::clear()
+{
+    m_bagOfwords.clear();
+}
+
+//!
+//! \brief Updates Bag with reference Bag. This should be used
+//!  only in calibration
+//! \param other - Reference bag recognized during calibratoin
+//!
+void Bag::merge(Bag &other)
+{
+    bool isAdded = false;
+
+    //Iterate through every recognized object
+    for (auto obj : other.m_bagOfwords)
+    {
+        //Iterate through every existing object
+        for (auto &word : this->m_bagOfwords)
+        {
+            //Check, if bag already contains current object
+            if(obj.idx == word.idx)
+            {
+                //Object already exists in destnation bag
+                isAdded = true;
+                //Check number of current class objects detected on image
+                //If there is more objects than already remebered,
+                //set number of occcurances to higher
+                if(obj.occurances > word.occurances)
+                    word.occurances = obj.occurances;
+            }
+        }
+
+        //If object was not previously added to Bag, add it
+        if(!isAdded)
+            this->addWord(obj.idx);
+        else
+            isAdded = false;
+    }
+}
+
+void Bag::save()
+{
+    QString output_path = path + QDir::separator()  + m_name + ".txt";
+    QFile file(output_path);
+
+    if(!file.open(QIODevice::Text | QIODevice::ReadWrite | QIODevice::Truncate))
+    {
+        qDebug() << "Cannot open file " + output_path;
+        return;
+    }
+    QTextStream stream(&file);
+
+    stream.reset();
+
+    for (auto word : m_bagOfwords)
+        stream << word.idx << " : " << word.occurances << " ,\n";
+
+    file.close();
+
+    qDebug() << "File " + output_path + " created";
+}
+
+QString Bag::getName() const
+{
+    return m_name;
+}
