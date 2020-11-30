@@ -17,7 +17,7 @@ Window {
         height: 720
         width: 1080
 
-    ListView{
+    ListView {
         id: menu
         anchors.centerIn: parent
         width: parent.width/2
@@ -53,6 +53,7 @@ Window {
         onBack: {
             calibTimer.stop()
             stack.replace(menuu)
+            console.log( )
     }}
 
     Aplikacja{
@@ -68,7 +69,6 @@ Window {
         id: stack
         initialItem: menuu
         anchors.fill: parent
-
     }
 
 

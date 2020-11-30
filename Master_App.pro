@@ -3,11 +3,11 @@ CONFIG += c++11
 
 SOURCES += \
         bag.cpp \
-        camerhandler.cpp \
-        customvideoreader.cpp \
-        customvideowriter.cpp \
+        calibrator.cpp \
+        camerahandler.cpp \
         detector.cpp \
-        main.cpp
+        main.cpp \
+        videoimageprovider.cpp
 
 RESOURCES += qml.qrc
 
@@ -17,10 +17,10 @@ INCLUDEPATH += C:\OPENCV\opencv\build\include
 INCLUDEPATH += C:\OPENCV\opencv\build\include\opencv2
 
 
-#LIBS += -LC:\OPENCV\opencv\build\x64\vc15\lib -lopencv_world401d
+
+#build with QT. 5.9.8 mingw
 LIBS += -LC:\OPENCV\opencv\build\x64\vc15\lib -lopencv_world401
-#LIBS += -LC:\OPENCV\opencv\build\x64\vc15\bin -lopencv_world401d
-#LIBS += -LC:\OPENCV\opencv\build\x64\vc15\bin -lopencv_world401
+
 
 LIBS += C:\OPENCV\opencv-build\bin\libopencv_core401.dll
 LIBS += C:\OPENCV\opencv-build\bin\libopencv_highgui401.dll
@@ -33,11 +33,11 @@ LIBS += C:\OPENCV\opencv-build\bin\libopencv_video401.dll
 LIBS += C:\OPENCV\opencv-build\bin\libopencv_dnn401.dll
 
 
-libopencv_videoio
+#libopencv_videoio
 
 HEADERS += \
     bag.h \
-    camerhandler.h \
-    customvideoreader.h \
-    customvideowriter.h \
-    detector.h
+    calibrator.h \
+    camerahandler.h \
+    detector.h \
+    videoimageprovider.h

@@ -20,6 +20,8 @@ public:
     std::vector<int> postProcess(cv::Mat& frame, const std::vector<cv::Mat>& out);
     void drawPred(int classId, float conf, int left, int top, int right, int bottom, cv::Mat& frame) ;
 
+    int get_number_of_classes();
+
 private:
     void loadModel();
 

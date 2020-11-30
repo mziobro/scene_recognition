@@ -11,6 +11,12 @@ Bag::Bag(QString name)
 
 }
 
+Bag::Bag(Bag &other)
+{
+    this->m_bagOfwords = other.m_bagOfwords;
+    this->m_name = other.m_name;
+}
+
 int Bag::getOccurance(int name) const
 {
     for(auto &word : m_bagOfwords)
@@ -37,7 +43,21 @@ void Bag::addWord(int idx)
         }
     }
     if(!alreadyPresent)
-        m_bagOfwords.push_back({idx, 1});
+        m_bagOfwords.push_back({idx, 1, 0});
+}
+
+void Bag::addWord(int idx, int occcurances)
+{
+    m_bagOfwords.push_back({idx, occcurances, 0});
+}
+
+void Bag::set_weight(float weight, int idx)
+{
+    for (auto& word : m_bagOfwords)
+    {
+        if (word.idx == idx)
+            word.weight = weight;
+    }
 }
 
 void Bag::clear()
@@ -83,7 +103,7 @@ void Bag::merge(Bag &other)
 
 void Bag::save()
 {
-    QString output_path = path + QDir::separator()  + m_name + ".txt";
+    QString output_path = path + m_name + ".txt";
     QFile file(output_path);
 
     if(!file.open(QIODevice::Text | QIODevice::ReadWrite | QIODevice::Truncate))
@@ -96,7 +116,7 @@ void Bag::save()
     stream.reset();
 
     for (auto word : m_bagOfwords)
-        stream << word.idx << " : " << word.occurances << " ,\n";
+        stream << word.idx << " : " << word.occurances << " : "<< word.weight << " ,\n";
 
     file.close();
 
@@ -106,4 +126,12 @@ void Bag::save()
 QString Bag::getName() const
 {
     return m_name;
+}
+
+Bag &Bag::operator=(const Bag &other)
+{
+    this->m_bagOfwords = other.m_bagOfwords;
+    this->m_name = other.m_name;
+
+    return *this;
 }

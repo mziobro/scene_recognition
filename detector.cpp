@@ -52,9 +52,9 @@ Bag Detector::recognize(cv::Mat frame)
  */
 void Detector::loadModel()
 {
-    std::string classesFile = "C:/Users/user/Desktop/BIOMED/pracaMagisterska/Deep learning/YOLO&opencv/\
-                                                    Activity-2/YOLO-3-OpenCV/yolo-coco-data/coco.names";
+    std::string classesFile = "C:/Users/user/Desktop/BIOMED/pracaMagisterska/Deep learning/YOLO&opencv/Activity-2/YOLO-3-OpenCV/yolo-coco-data/coco.names";
 
+//    std::string classesFile = "C:/Users/user/Desktop/BIOMED/pracaMagisterska/Baza_danych/classes.name";
     // Reads classes names from file
     std::ifstream ifs(classesFile.c_str());
     std::string line;
@@ -160,5 +160,10 @@ void Detector::drawPred(int classId, float conf, int left, int top, int right, i
 //    cv::Size labelSize = getTextSize(label, cv::FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
 //    top = cv::max(top, labelSize.height);
 //    rectangle(frame, cv::Point(left, top - round(1.5*labelSize.height)), cv::Point(left + round(1.5*labelSize.width), top + baseLine), cv::Scalar(255, 255, 255), cv::FILLED);
-//    putText(frame, label, cv::Point(left, top), cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(0,0,0),1);
+    //    putText(frame, label, cv::Point(left, top), cv::FONT_HERSHEY_SIMPLEX, 0.75, cv::Scalar(0,0,0),1);
+}
+
+int Detector::get_number_of_classes()
+{
+    return m_classes.size();
 }
