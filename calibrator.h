@@ -17,6 +17,8 @@ public:
     void calibrate_video_file(QString filename, QString);
     void recognize();
 
+    void readCalibResults();
+
     std::vector<Bag*> get_rooms(){ return m_rooms; }
 
     void set_rooms(std::vector<Bag*> rooms){
@@ -32,7 +34,7 @@ private:
 
     cv::Mat m_frame;
     Detector * m_detector;
-    std::vector<Bag*> m_rooms;
+    std::vector<Bag *> m_rooms;
 };
 
 

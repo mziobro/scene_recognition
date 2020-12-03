@@ -3,7 +3,8 @@
 #include <QFile>
 #include <QDir>
 #include <QDebug>
-
+#include <QJsonDocument>
+#include <QJsonObject>
 
 Bag::Bag(QString name)
     : m_name(name)
@@ -51,12 +52,31 @@ void Bag::addWord(int idx, int occcurances)
     m_bagOfwords.push_back({idx, occcurances, 0});
 }
 
+void Bag::addWeightedWord(int idx, float weight)
+{
+    m_bagOfwords.push_back({idx, 0, weight});
+}
+
 void Bag::set_weight(float weight, int idx)
 {
     for (auto& word : m_bagOfwords)
     {
         if (word.idx == idx)
             word.weight = weight;
+    }
+}
+
+void Bag::load_bags()
+{
+    QDir dir;
+    QFile file;
+    for (auto file : dir.entryList(QDir::Files))
+    {
+        if (file.contains(".json"))
+        {
+            QJsonDocument json_doc;
+
+        }
     }
 }
 
@@ -70,7 +90,7 @@ void Bag::clear()
 //!  only in calibration
 //! \param other - Reference bag recognized during calibratoin
 //!
-void Bag::merge(Bag &other)
+void Bag::merge(Bag other)
 {
     bool isAdded = false;
 
@@ -103,20 +123,28 @@ void Bag::merge(Bag &other)
 
 void Bag::save()
 {
-    QString output_path = path + m_name + ".txt";
+    QDir calib_files_dir{m_path};
+    QString output_path = m_path + m_name + ".json";
     QFile file(output_path);
+
+    if (!calib_files_dir.exists())
+        calib_files_dir.mkpath(m_path);
 
     if(!file.open(QIODevice::Text | QIODevice::ReadWrite | QIODevice::Truncate))
     {
         qDebug() << "Cannot open file " + output_path;
         return;
     }
-    QTextStream stream(&file);
+    QJsonObject obj;
 
-    stream.reset();
 
-    for (auto word : m_bagOfwords)
-        stream << word.idx << " : " << word.occurances << " : "<< word.weight << " ,\n";
+    for (auto word : m_bagOfwords){
+        obj[QString::number(word.idx)] = double(word.weight);
+    }
+
+    QJsonDocument doc;
+    doc.setObject(obj);
+    file.write(doc.toJson());
 
     file.close();
 

@@ -6,11 +6,45 @@
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
 
-CameraHandler::CameraHandler() :
+CameraHandler::CameraHandler(QString source) :
     m_video_recording(false),
-    m_source("C:/Users/user/Documents/build-Master_App-Desktop_Qt_5_9_8_MinGW_32bit-Debug/Pomieszczenie.avi"),//"rtsp://192.168.0.206:8080/video/h264"),
-    m_filename("pomieszczenie")
+    m_source(source),
+    m_filename("pomieszczenie"),
+    m_stop(false)
+{}
+
+
+
+void CameraHandler::read_camera()
 {
+    m_camera >> m_frame;
+
+    if (m_frame.empty())
+    {
+        qDebug() << "Frame is empty!";
+        return;
+    }
+    else {
+        emit new_frame(m_frame);
+    }
+}
+
+void CameraHandler::read_frame()
+{
+    if(m_camera.isOpened())
+        m_camera.release();
+
+    open();
+
+    read_camera();
+    m_camera.release();
+}
+
+bool CameraHandler::open()
+{
+    if (m_camera.isOpened())
+        return false;
+
     m_camera.open(m_source.toStdString());
 
     m_frame_width = m_camera.get(cv::CAP_PROP_FRAME_WIDTH);
@@ -19,30 +53,16 @@ CameraHandler::CameraHandler() :
     if(!m_camera.isOpened())
         qDebug() << "Cannot open camera!";
     else qDebug() << "Camera opened";
-
-    //    read_camera();
-}
-
-void CameraHandler::read_camera()
-{
-    m_camera >> m_frame;
-
-    if (m_frame.empty())
-    {
-        //        qDebug() << "Frame is empty!";
-        return;
-    }
-    else {
-        QString name = recognize();
-        emit new_frame(m_frame);
-        emit newFrame();
-        emit new_desc(name);
-    }
 }
 
 void CameraHandler::run()
 {
     QtConcurrent::run([this](){
+
+        if(!m_camera.isOpened())
+        {
+            open();
+        }
 
         if(m_camera.isOpened())
         {
@@ -53,9 +73,11 @@ void CameraHandler::run()
 
                 if (m_video_recording)
                     write_to_file();
+
+                if (m_stop)
+                    break;
             }
         }
-
     });
 }
 
@@ -72,14 +94,21 @@ void CameraHandler::next()
     });
 }
 
-QString CameraHandler::recognize()
+void CameraHandler::recognize()
 {
+    QtConcurrent::run(this, &CameraHandler::recognize_task);
+}
+
+void CameraHandler::recognize_task()
+{
+    read_frame();
+
     qDebug() << "recognizing";
     Bag referenceBag("refBag");
 
     // If the frame is empty, break immediately
     if (m_frame.empty())
-        return QString();
+        return;// QString();
 
     referenceBag = m_detector->recognize(m_frame);
 
@@ -116,19 +145,31 @@ QString CameraHandler::recognize()
                 }
             }
 
-            if (!atLeastOneMatches)
-                return QString("Nie oznaczono żadnego\n"
-                               "pomieszczenia");
+            if (!atLeastOneMatches){
+                m_description = ("Nie oznaczono żadnego\n"
+                              "pomieszczenia");
+
+                emit new_desc(m_description);
+                qDebug() << "Brak maczy";
+                return;
+            }
 
             auto it = std::max_element(points.begin(), points.end());
             int index = std::distance(points.begin(), it);
 
-            return m_rooms.at(index)->getName();
-
+            emit processingDone();
+            m_description = m_rooms.at(index)->getName();
+            emit new_desc(m_description);
+            qDebug() << m_rooms.at(index)->getName();
+            return;
         }
 
-        return QString("Nie oznaczono żadnego\n"
-                       "pomieszczenia");
+        emit processingDone();
+        m_description = ("Nie oznaczono żadnego\n"
+                      "pomieszczenia");
+
+        emit new_desc(m_description);
+        qDebug() << "Bez pomieszczenia";
     }
 }
 

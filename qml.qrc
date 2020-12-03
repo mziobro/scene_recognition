@@ -4,5 +4,6 @@
         <file>Kalibrator.qml</file>
         <file>CustomButton.qml</file>
         <file>Aplikacja.qml</file>
+        <file>Settings.qml</file>
     </qresource>
 </RCC>

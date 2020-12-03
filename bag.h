@@ -4,6 +4,8 @@
 #include <vector>
 #include <QString>
 
+#include <QDir>
+
 class Bag
 {
 public:
@@ -19,11 +21,13 @@ public:
     int getOccurance(int name) const;
     void addWord(int idx);
     void addWord(int idx, int occcurances);
+    void addWeightedWord(int idx, float weight);
 
     void set_weight(float weight, int idx);
 
+    void load_bags();
     void clear();
-    void merge(Bag&);
+    void merge(Bag);
     void save();
 
     QString getName() const;
@@ -33,7 +37,7 @@ public:
 private:
     QString m_name;
 
-    const QString path = "C:/Users/user/Documents/Master_App/";
+    const QString m_path = QDir::currentPath() +  "/Calib/";
 };
 
 #endif // BAGOFWORDS_H
