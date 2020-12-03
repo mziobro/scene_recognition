@@ -129,7 +129,9 @@ Rectangle {
             calibrator.calibrate()
             popupText.text = "Trwa kalibracja,\n proszę czekać"
             area.visible = false
+            busy.visible = true
             calibratingInprogressPopup.open()
+            okButton.visible = false
             console.log('calibratong')
         }
     }
@@ -137,7 +139,7 @@ Rectangle {
     Popup {
         id: calibratingInprogressPopup
         modal: true
-        closePolicy: Popup.CloseOnEscape
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnEnter
         width: background.width/2
         height: background.height/3
         y: background.height/2 - background.height/3
@@ -156,7 +158,8 @@ Rectangle {
 
             BusyIndicator {
                 id: busy
-                running: calibratingInprogressPopup.opened  && !area.visible
+                running: calibratingInprogressPopup.opened
+                visible: false
                 Layout.alignment: Qt.AlignHCenter
             }
 
@@ -174,6 +177,7 @@ Rectangle {
             }
 
             CustomButton {
+                id: okButton
                 visible: true
                 text: "OK"
                 onClicked: {
@@ -192,14 +196,17 @@ Rectangle {
             target: calibrator
             onCalibrationEnd:
             {
-                popupText: "Zakończono kalibrację";
+                okButton.visible = true
+                popupText.text =  "Zakończono kalibrację";
             }
         }
     }
 
 
     onOpen: {
+        videoWriter.run()
         popupText.text = "Wprowadź nazwę pomieszczenia: "
+        area.visible = true
         calibratingInprogressPopup.open()
     }
 

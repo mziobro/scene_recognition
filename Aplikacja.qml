@@ -10,7 +10,12 @@ Rectangle {
     width: 1080
     height: 720
     signal back()
-//    property alias imageTimer: timer
+    signal processingDone()
+    signal open()
+
+    onOpen: {
+        videoWriter.recognize()
+    }
                 property int name: 1
 
     Image {
@@ -19,29 +24,18 @@ Rectangle {
         objectName: "img"
         anchors.centerIn: parent
         asynchronous : true
-
-//        Timer{
-//            id: timer
-//            interval: 4000
-//            property int name: 1
-//            onTriggered: {
-//                console.log("Triggered")
-//                image.source =  "image://openCVimageCapture/run" + name.toString()
-//                name = name + 1
-//                recognizedRoom.text = videoWriter.recognize();
-//            }
-//            running: false
-//            repeat: true
-//        }
+        source: "image://openCVimageCapture/run"
 
         Connections {
             target: videoWriter
-            onNewFrame: {
+            onProcessingDone: {
                 image.source =  "image://openCVimageCapture/run" + name.toString()
                 name = name + 1
+                videoWriter.recognize()
             }
             onNew_desc: {
-                recognizedRoom.text = room
+                console.log("New desc!")
+                recognizedRoom.text = videoWriter.desc
             }
         }
     }
@@ -57,18 +51,6 @@ Rectangle {
         }
         color: "white"
         text: "Pomieszczenie"
-    }
-
-    CustomButton {
-        id: run
-        text: "Next"
-        anchors {
-            bottom: back. top
-            right: background.right
-            bottomMargin: 10
-            rightMargin: 10
-        }
-        onClicked: videoWriter.next()
     }
 
     CustomButton {

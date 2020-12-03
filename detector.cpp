@@ -3,7 +3,6 @@
 #include <string>
 #include <QDebug>
 
-//#include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/dnn/dnn.hpp>
 
@@ -12,11 +11,27 @@
 extern std::vector<Bag> rooms;
 
 
-Detector::Detector(QString cfg, QString weights)
+Detector::Detector(QString cfg, QString weights, QString names)
     : m_yolo3_weights(weights),
-      m_yolo3_config(cfg)
+      m_yolo3_config(cfg),
+      m_yolo3_names(names)
 {
     loadModel();
+}
+
+void Detector::set_config(QString cfg)
+{
+    m_yolo3_config = cfg;
+}
+
+void Detector::set_weights(QString weights)
+{
+   m_yolo3_weights = weights;
+}
+
+void Detector::set_names(QString names)
+{
+    m_yolo3_names = names;
 }
 
 /*!
@@ -52,11 +67,9 @@ Bag Detector::recognize(cv::Mat frame)
  */
 void Detector::loadModel()
 {
-    std::string classesFile = "C:/Users/user/Desktop/BIOMED/pracaMagisterska/Deep learning/YOLO&opencv/Activity-2/YOLO-3-OpenCV/yolo-coco-data/coco.names";
 
-//    std::string classesFile = "C:/Users/user/Desktop/BIOMED/pracaMagisterska/Baza_danych/classes.name";
     // Reads classes names from file
-    std::ifstream ifs(classesFile.c_str());
+    std::ifstream ifs(m_yolo3_names.toStdString().c_str());
     std::string line;
     while (std::getline(ifs, line)) m_classes.push_back(line);
 

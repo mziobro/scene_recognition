@@ -5,6 +5,7 @@ SOURCES += \
         bag.cpp \
         calibrator.cpp \
         camerahandler.cpp \
+        config.cpp \
         detector.cpp \
         main.cpp \
         videoimageprovider.cpp
@@ -39,5 +40,6 @@ HEADERS += \
     bag.h \
     calibrator.h \
     camerahandler.h \
+    config.h \
     detector.h \
     videoimageprovider.h

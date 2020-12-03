@@ -28,14 +28,14 @@ void Calibrator::calibrate_video_file(QString filename, QString name)
     bool isNew = true;
     Bag * bagToWrite = new Bag(name);
 
-    for (auto &bag : m_rooms)
+    for (uint8_t i = 0; i < m_rooms.size(); i++)
     {
-        if (bag->getName() == name)
+        if (m_rooms.at(i)->getName() == name)
         {
             //there already is a bag for this room!
             isNew = false;
-            bag->clear();
-            bagToWrite = bag;
+            m_rooms.at(i)->clear();
+            m_rooms.at(i) = bagToWrite;
             break;
         }
     }
@@ -62,25 +62,66 @@ void Calibrator::calibrate_video_file(QString filename, QString name)
 
 
             Bag referenceBag("refBag");
-                referenceBag =  m_detector->recognize(m_frame);
+                referenceBag = m_detector->recognize(m_frame);
             bagToWrite->merge(referenceBag);
         }
 
         bagToWrite->save();
 }
 
+void Calibrator::readCalibResults()
+{
+    QDir calib_dir{QDir::currentPath() + "/Calib/"};
+    QFile calib_file;
+
+    int it = 0;
+
+    for (auto filename : calib_dir.entryList(QDir::Files))
+    {
+        calib_file.setFileName(calib_dir.path() + QDir::separator() + filename);
+        if (calib_file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            QString val = calib_file.readAll();
+
+
+            QJsonDocument doc = QJsonDocument::fromJson(val.toUtf8());
+            calib_file.close();
+
+            QJsonObject obj = doc.object();
+
+            m_rooms.push_back(new Bag(filename.split(".").at(0)));
+
+            for (int i = 0; i < 80; i++)
+            {
+                if (obj.contains(QString::number(i)))
+                {
+                    m_rooms[it]->addWeightedWord(i, obj[QString::number(i)].toDouble());
+                }
+            }
+
+            it++;
+        }
+
+        else {
+                qDebug() << "Cannot open " << filename;
+        }
+    }
+
+}
+
 void Calibrator::calibrate()
 {
+    QtConcurrent::run([this](){
     read_filelist();
 
 
     calibrate_weights();
     emit calibrationEnd();
+    });
 }
 
 void Calibrator::calibrate_weights()
 {
-    qDebug() << "Calibrate some weights!";
     int classes = m_detector->get_number_of_classes();
     int max = 0;
     int temp = 0;

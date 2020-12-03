@@ -7,13 +7,28 @@
 
 #include "bag.h"
 
-class Detector
+#include <QObject>
+
+/*!
+ * \brief The Detector class
+ * \details Klasa obsługująca sieć neuronową. Wykorzystuje funkcje
+ * biblioteki deep neural network z OpenCV. Model ładowany jest przez
+ * funkcję loadModel(). Detekcja odbywa się w funckji recognize(), która zwraca
+ * Bag referencyjnym czyli rozpoznane obiekty i ich liczebność.
+ */
+class Detector : QObject
 {
+    Q_OBJECT
 public:
     enum class DetectType { Calibrate, Recognize };
+    explicit Detector(QString cfg, QString weights, QString names);
 
 
-    explicit Detector(QString cfg, QString weights);
+    Q_INVOKABLE void set_config(QString);
+    Q_INVOKABLE void set_weights(QString);
+    Q_INVOKABLE void set_names(QString);
+    Q_INVOKABLE void loadModel();
+
 
     Bag recognize(cv::Mat frame);
     std::vector<std::string> getOutputsNames();
@@ -23,11 +38,12 @@ public:
     int get_number_of_classes();
 
 private:
-    void loadModel();
 
     QStringList m_objects;
-    const QString m_yolo3_weights;
-    const QString m_yolo3_config;
+    QString m_yolo3_weights;
+    QString m_yolo3_config;
+    QString m_yolo3_names;
+
     cv::dnn::Net m_net;
 
     //image parameters
@@ -35,6 +51,7 @@ private:
     const float m_nmsThreshold = 0.4f;
     const int m_inpWidth = 416;
     const int m_inpHeight = 416;
+
     std::vector<std::string> m_classes;
 };
 

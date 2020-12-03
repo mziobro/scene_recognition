@@ -21,7 +21,7 @@ Window {
         id: menu
         anchors.centerIn: parent
         width: parent.width/2
-        height: 170
+        height: 230
         focus: true
         model: model
         spacing: 10
@@ -35,6 +35,9 @@ Window {
             ListElement{
                 textt: "Start aplikacji"
             }
+//            ListElement{
+//                textt: "Ustawienia"
+//            }
             ListElement{
                 textt: "Wyjście"
             }
@@ -53,23 +56,32 @@ Window {
         onBack: {
             calibTimer.stop()
             stack.replace(menuu)
-            console.log( )
+            videoWriter.stop = true
     }}
 
     Aplikacja{
         id: aplikacja
         visible: false
         onBack: {
-            imageTimer.stop()
             stack.replace(menuu)
+            console.log("Replacing with menu")
         }
     }
+
+//    Settings {
+//        id: settings
+//        onBack: {
+//            stack.replace(menuu)
+//        }
+//    }
 
     StackView{
         id: stack
         initialItem: menuu
         anchors.fill: parent
     }
+
+
 
 
     Component {
@@ -91,6 +103,7 @@ Window {
                 onClicked:{
                     if(textt == "Kalibracja")
                     {
+                        kalibracja.open()
                         stack.replace(kalibracja)
                         kalibracja.calibTimer.start()
                     }
@@ -98,11 +111,11 @@ Window {
                     {
                         kalibracja.calibTimer.stop()
                         stack.replace(aplikacja)
-                        aplikacja.imageTimer.start()
-                        visible: true
+                        aplikacja.open()
                     }
-                    else if (textt == "Wyjście")
+                    else if (textt == "Wyjście"){
                         Qt.quit()
+                    }
                 }
             }
         }

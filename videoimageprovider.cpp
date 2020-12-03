@@ -27,8 +27,8 @@ QImage VideoImageProvider::requestImage(const QString &id, QSize *size, const QS
     Q_UNUSED(requestedSize)
 
    if(!m_frame.empty()){
-    cv::cvtColor(m_frame, m_frame, cv::COLOR_BGR2RGB);
-    m_image = QImage(static_cast<uchar*>(m_frame.data), m_frame.cols, m_frame.rows, m_frame.step1(), QImage::Format_RGB888);
+        cv::cvtColor(m_frame, m_frame, cv::COLOR_BGR2RGB);
+        m_image = QImage(static_cast<uchar*>(m_frame.data), m_frame.cols, m_frame.rows, m_frame.step1(), QImage::Format_RGB888);
    }
    else
        qDebug() << "No frame yet";
