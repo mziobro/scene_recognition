@@ -8,6 +8,11 @@
 #include <opencv2/videoio/videoio.hpp>
 #include <QReadWriteLock>
 
+/*!
+ * \brief The VideoImageProvider class
+ * \details klasa - wtyczka do QMLa. Aktualizuje
+ * obrazki zarówno w wikoku Kalibracja jak i w widoku Aplikacja.
+ */
 class VideoImageProvider : public QQuickImageProvider
 {
 public:

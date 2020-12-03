@@ -7,6 +7,16 @@
 #include "detector.h"
 #include "bag.h"
 
+/*!
+ * \brief The Calibrator class Klasa kalibrująca
+ * \details Ta klasa jest odpowiedzialna za proces kalibracji.
+ * Po nagraniu sekwencji kalibracyjnych, są one kolejno analizowane w
+ * funkcji read_filelist(), która czyta z poszczególnych plików i wysyła
+ * je do funkcji calibrate_video_file(), gdzie wideo jest analizowane ramka
+ * po ramce, a obiekty dodawane są do Bag dla danego pomieszczenia.
+ *
+ * Interfejsem klasy jest funkcja calibrate(), która jest wywoływana z QMLa.
+ */
 class Calibrator : public QObject
 {
     Q_OBJECT

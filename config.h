@@ -6,6 +6,9 @@
 /*!
  * \brief The Config class is responsible for storing
  * paths and other configurable settings
+ *
+ * \details Klasa wczytująca ścieżki do plików modelu YOLO
+ * i do streamu video
  */
 class Config
 {

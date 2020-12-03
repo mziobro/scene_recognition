@@ -1,0 +1,6 @@
+{
+	"video" : "rtsp://192.168.0.206:8080/video/h264",
+	"weights" : "/Yolo/COCO/yolov3.weights",
+	"cfg" : "/Yolo/COCO/yolov3.cfg",
+	"names" : "/Yolo/COCO/coco.names"
+}

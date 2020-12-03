@@ -10,6 +10,18 @@
 #include "bag.h"
 #include <vector>
 
+/*!
+ * \brief The CameraHandler class Handles camera
+ * \details Klasa do obsługi streamu video. Źródło  wideo jest w
+ * zasadzie obojętne, można je zmienić w pliku config.json.
+ * Kamera otwierana jest w funkcji open().
+ *
+ * W obecnej implementacji kamera uruchamiana jest w dwóch trybach -
+ * - w trakcie kalibracji funkcja run() zapewnia ciągłą pracę kamery, natomiast
+ * w trakcie rzeczywistej detekcji ramki pobierane są 'na żądanie' przez funkcję
+ * read_frame()
+ *
+ */
 class CameraHandler : public QObject
 {
     Q_OBJECT

@@ -9,13 +9,6 @@
 
 #include <QObject>
 
-/*!
- * \brief The Detector class
- * \details Klasa obsługująca sieć neuronową. Wykorzystuje funkcje
- * biblioteki deep neural network z OpenCV. Model ładowany jest przez
- * funkcję loadModel(). Detekcja odbywa się w funckji recognize(), która zwraca
- * Bag referencyjnym czyli rozpoznane obiekty i ich liczebność.
- */
 class Detector : QObject
 {
     Q_OBJECT

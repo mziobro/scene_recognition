@@ -1,0 +1,110 @@
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QFile>
+
+#include "config.h"
+
+Config::Config() :
+    m_video_path_default("rtsp://192.168.0.206:8080/video/h264"),
+    m_yolo_cfg_path_default("C:/Users/user/Desktop/BIOMED/pracaMagisterska/Deep learning/YOLO&opencv/Activity-2/YOLO-3-OpenCV/yolo-coco-data/yolov3.cfg"),
+    m_yolo_names_path_default("C:/Users/user/Desktop/BIOMED/pracaMagisterska/Deep learning/YOLO&opencv/Activity-2/YOLO-3-OpenCV/yolo-coco-data/coco.names"),
+    m_yolo_weigths_path_default("C:/Users/user/Desktop/BIOMED/pracaMagisterska/Deep learning/YOLO&opencv/Activity-2/YOLO-3-OpenCV/yolo-coco-data/yolov3.weights")
+{}
+
+void Config::read()
+{
+    QFile file;
+
+    if (QFile::exists("config.json"))
+    {
+        file.setFileName("config.json");
+        file.open(QIODevice::ReadOnly | QIODevice::Text);
+        QJsonDocument val = QJsonDocument::fromBinaryData(file.readAll());
+        file.close();
+        QJsonObject obj = val.object();
+
+        m_video_path = obj["video"].toString();
+        m_yolo_weigths_path = obj["weights"].toString();
+        m_yolo_cfg_path = obj["cfg"].toString();
+        m_yolo_names_path = obj["names"].toString();
+    }
+    else
+    {
+        QJsonDocument doc;
+        file.setFileName("config.json");
+        file.open(QIODevice::WriteOnly | QIODevice::Text);
+        QJsonObject obj;
+        obj["video"] = m_video_path_default;
+        obj["weights"] = m_yolo_weigths_path_default;
+        obj["cfg"] = m_yolo_cfg_path_default;
+        obj["names"] = m_yolo_names_path_default;
+
+        doc.setObject(obj);
+
+     // Write json to the file as text and close the file.
+        file.write(doc.toJson());
+        file.close();
+    }
+}
+
+void Config::save()
+{
+
+}
+
+void Config::set_video_path(QString path)
+{
+    if (m_video_path != path)
+    {
+        m_video_path = path ;
+        emit videoPathChanged();
+    }
+}
+
+void Config::set_yolo_cfg_path(QString path)
+{
+    if (m_yolo_cfg_path != path)
+    {
+        m_yolo_cfg_path = path ;
+        emit cfgPathChanged();
+    }
+}
+
+void Config::set_yolo_weights_path(QString path)
+{
+    if (m_yolo_weigths_path != path)
+    {
+        m_yolo_cfg_path = path ;
+        emit weightsPathChanged();
+    }
+}
+
+void Config::set_yolo_names_path(QString path)
+{
+    if (m_yolo_names_path != path)
+    {
+        m_yolo_names_path = path ;
+        emit namesPathChanged();
+    }
+}
+
+QString Config::get_video_path() const
+{
+    return m_video_path;
+}
+
+
+QString Config::get_yolo_cfg_path() const
+{
+    return m_yolo_cfg_path;
+}
+
+QString Config::get_yolo_weights() const
+{
+    return m_yolo_weigths_path;
+}
+
+QString Config::get_yolo_names_path() const
+{
+    return m_yolo_names_path;
+}
